@@ -20,6 +20,16 @@ docker compose up --build
 
 A aplicação fica disponível em **http://localhost:8000**.
 
+## Usuários de exemplo
+
+O banco já sobe com usuários para teste:
+
+| Perfil    | E-mail              | Senha          |
+| --------- | ------------------- | -------------- |
+| Admin     | `admin@admin.com`   | `admin123`     |
+| Atendente | `ana@empresa.com`   | `atendente123` |
+| Atendente | `bruno@empresa.com` | `atendente123` |
+
 ### Conflito de porta
 
 Se a porta `8000` (ou a `5432` do banco) já estiver em uso na máquina, defina outra
