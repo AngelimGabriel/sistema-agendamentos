@@ -60,6 +60,22 @@ seguem implementadas exatamente como descrito.
 requisito funcional RQF1.3: "editar os mesmos campos da inserção, exceto email e senha". Na tela de edição,
 esses dois campos não são editáveis por nenhum perfil.
 
+## Atendente não altera o próprio perfil
+
+O case (requisito funcional RQF1.3) permite editar os mesmos campos da inserção, o que inclui o Tipo de Usuário.
+Mas deixar o atendente editar o próprio `role` permitiria auto-promoção a admin (falha de segurança). Por isso,
+só o admin altera o perfil de um usuário; o atendente, ao editar a si mesmo, mantém o `role` atual.
+
+## Garante ao menos um administrador
+
+O case (requisito funcional RQF1.1) exige que ao menos um usuário tenha perfil admin. O sistema impede excluir
+ou rebaixar o último administrador ativo (responde 400), para a base nunca ficar sem nenhum admin.
+
+## Login com mensagem genérica
+
+No login, e-mail inexistente e senha errada retornam a mesma resposta ("E-mail ou senha inválidos", 401).
+Não revelar qual dos dois falhou dificulta a enumeração de usuários válidos.
+
 ---
 
 # Frontend
