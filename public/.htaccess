@@ -1,0 +1,7 @@
+RewriteEngine On
+
+# Se a URL aponta para um arquivo ou pasta que existe de verdade, serve direto
+# (ex: futuros assets estáticos). Caso contrário, manda tudo para o front controller.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
