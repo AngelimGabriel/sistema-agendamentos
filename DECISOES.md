@@ -140,3 +140,10 @@ o banco rejeita dado inconsistente.
 Um agendamento aponta direto para `attendant_id` + `date`, e não para um `availability_id`. A relação com
 a janela de disponibilidade é lógica de consulta (calculada na hora), não de persistência — assim a agenda
 não quebra se o admin alterar a disponibilidade depois.
+
+## Status do agendamento limitado a "scheduled" e "cancelled"
+
+O case só menciona reservas e cancelamentos, sem definir um ciclo de vida pós-agendamento (concluído, no-show
+etc.). Por isso o `status` tem apenas dois valores: `scheduled` e `cancelled`. Não inflei o escopo com estados
+que o enunciado não pede. O campo é uma string com CHECK, então fica extensível para novos status no futuro,
+sem mudança estrutural.
