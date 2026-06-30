@@ -1,0 +1,282 @@
+{
+  "info": {
+    "name": "Sistema de Agendamentos",
+    "description": "Coleção de rotas da API do Sistema de Agendamentos (PHP + PostgreSQL).\n\nAutenticação por sessão (cookie): rode o request 'Login' primeiro — o Postman guarda o cookie de sessão automaticamente e as demais requisições já vão autenticadas.\n\nVariável `base_url` aponta para http://localhost:8000.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            },
+            "description": "Autentica e abre a sessão. Usuários do seed: admin@admin.com / admin123 (admin), ana@empresa.com / atendente123 (atendente)."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": ["{{base_url}}"],
+              "path": ["logout"]
+            },
+            "description": "Encerra a sessão atual."
+          }
+        },
+        {
+          "name": "Usuário logado (me)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": ["{{base_url}}"],
+              "path": ["me"]
+            },
+            "description": "Retorna os dados do usuário da sessão (id, nome, e-mail, tipo de usuário). 401 se não houver sessão."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuários",
+      "item": [
+        {
+          "name": "Listar usuários",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": ["{{base_url}}"],
+              "path": ["users"]
+            },
+            "description": "Lista todos os usuários ativos. Visível a qualquer usuário logado."
+          }
+        },
+        {
+          "name": "Consultar usuário",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/2",
+              "host": ["{{base_url}}"],
+              "path": ["users", "2"]
+            },
+            "description": "Retorna um usuário pelo id. 404 se não existir."
+          }
+        },
+        {
+          "name": "Criar usuário (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Novo Atendente\",\n  \"email\": \"novo@empresa.com\",\n  \"role\": \"attendant\",\n  \"password\": \"senha123\",\n  \"password_confirmation\": \"senha123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": ["{{base_url}}"],
+              "path": ["users"]
+            },
+            "description": "Cria um usuário. Apenas admin (403 caso contrário). Valida e-mail (formato + único), senha mínima de 8 e confirmação."
+          }
+        },
+        {
+          "name": "Editar usuário",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nome Atualizado\",\n  \"role\": \"attendant\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/2",
+              "host": ["{{base_url}}"],
+              "path": ["users", "2"]
+            },
+            "description": "Edita nome e tipo de usuário (não altera e-mail/senha). Admin edita qualquer um; atendente edita só o próprio. Só admin altera o tipo de usuário."
+          }
+        },
+        {
+          "name": "Excluir usuário (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/4",
+              "host": ["{{base_url}}"],
+              "path": ["users", "4"]
+            },
+            "description": "Soft delete. Apenas admin. O sistema deve ter ao menos um administrador (400)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Disponibilidade",
+      "item": [
+        {
+          "name": "Listar disponibilidade do atendente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/2/availability",
+              "host": ["{{base_url}}"],
+              "path": ["users", "2", "availability"]
+            },
+            "description": "Janelas de disponibilidade de um atendente."
+          }
+        },
+        {
+          "name": "Criar disponibilidade (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 2,\n  \"day_of_week\": 5,\n  \"start_time\": \"09:00\",\n  \"end_time\": \"12:00\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/availability",
+              "host": ["{{base_url}}"],
+              "path": ["availability"]
+            },
+            "description": "Cadastra uma janela. Apenas admin. day_of_week: 0=domingo ... 6=sabado. Horas cheias e hora final maior que a inicial."
+          }
+        },
+        {
+          "name": "Editar disponibilidade (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"day_of_week\": 5,\n  \"start_time\": \"13:00\",\n  \"end_time\": \"17:00\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/availability/1",
+              "host": ["{{base_url}}"],
+              "path": ["availability", "1"]
+            },
+            "description": "Edita uma janela existente. Apenas admin."
+          }
+        },
+        {
+          "name": "Remover disponibilidade (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/availability/1",
+              "host": ["{{base_url}}"],
+              "path": ["availability", "1"]
+            },
+            "description": "Soft delete de uma janela. Apenas admin."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agendamentos",
+      "item": [
+        {
+          "name": "Horários disponíveis",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/2/available-slots?date=2026-07-06",
+              "host": ["{{base_url}}"],
+              "path": ["users", "2", "available-slots"],
+              "query": [
+                { "key": "date", "value": "2026-07-06" }
+              ]
+            },
+            "description": "Grade de horários (1h) do atendente na data, com 'available' indicando livre/ocupado."
+          }
+        },
+        {
+          "name": "Agenda do atendente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/2/appointments",
+              "host": ["{{base_url}}"],
+              "path": ["users", "2", "appointments"]
+            },
+            "description": "Lista os agendamentos do atendente (inclui cancelados)."
+          }
+        },
+        {
+          "name": "Criar agendamento",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"attendant_id\": 2,\n  \"date\": \"2026-07-06\",\n  \"start_time\": \"14:00\",\n  \"client_name\": \"Cliente Exemplo\",\n  \"client_email\": \"cliente@exemplo.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/appointments",
+              "host": ["{{base_url}}"],
+              "path": ["appointments"]
+            },
+            "description": "Cria um agendamento de 1h. Valida que o horário está dentro da disponibilidade e que o slot não está ocupado. Atendente agenda só na própria agenda; admin para qualquer atendente."
+          }
+        },
+        {
+          "name": "Cancelar agendamento",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/appointments/1/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["appointments", "1", "cancel"]
+            },
+            "description": "Cancela um agendamento (status = cancelled). Admin ou o próprio atendente."
+          }
+        }
+      ]
+    }
+  ]
+}
