@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamentos — Sistema de Agendamentos</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/agendamentos.html" class="active">Agendamentos</a>
+        <a href="/usuarios.html">Usuários</a>
+        <div class="spacer"></div>
+        <span class="user-info" id="user-info"></span>
+        <button class="btn btn-secondary btn-sm" id="logout-btn">Sair</button>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Agendamentos</h1>
+        </div>
+
+        <div class="card" style="margin-bottom: 24px;">
+            <div class="field" style="margin-bottom: 0;">
+                <label for="attendant-select">Atendente</label>
+                <select id="attendant-select"></select>
+            </div>
+        </div>
+
+        <!-- Disponibilidade do atendente (admin gerencia) -->
+        <div class="card collapsible collapsed">
+            <div class="collapsible-header">
+                <span class="chevron">▾</span>
+                <h2>Disponibilidade</h2>
+                <div class="spacer"></div>
+                <button class="btn hidden" id="new-availability-btn">Adicionar</button>
+            </div>
+            <div class="collapsible-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dia da semana</th>
+                            <th>Início</th>
+                            <th>Fim</th>
+                            <th>Ativo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="availability-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Consulta de horários disponíveis e agendamento (case RQF2.3) -->
+        <div class="card collapsible collapsed" style="margin-top: 24px;">
+            <div class="collapsible-header">
+                <span class="chevron">▾</span>
+                <h2>Horários disponíveis</h2>
+            </div>
+            <div class="collapsible-body">
+                <div class="field">
+                    <label for="slot-date">Data</label>
+                    <input type="date" id="slot-date">
+                </div>
+                <div id="slots-container"></div>
+            </div>
+        </div>
+
+        <!-- Agenda do atendente (lista de agendamentos + cancelamento) -->
+        <div class="card collapsible collapsed" style="margin-top: 24px;">
+            <div class="collapsible-header">
+                <span class="chevron">▾</span>
+                <h2>Agenda do atendente</h2>
+            </div>
+            <div class="collapsible-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Cliente</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointments-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de disponibilidade -->
+    <div class="modal-overlay hidden" id="availability-modal">
+        <div class="modal">
+            <h2 id="availability-title">Adicionar disponibilidade</h2>
+            <form id="availability-form">
+                <div class="field">
+                    <label for="a-day">Dia da Semana <span class="required">*</span></label>
+                    <select id="a-day"></select>
+                </div>
+                <div class="field">
+                    <label for="a-start">Hora Inicial <span class="required">*</span></label>
+                    <select id="a-start"></select>
+                </div>
+                <div class="field">
+                    <label for="a-end">Hora Final <span class="required">*</span></label>
+                    <select id="a-end"></select>
+                </div>
+                <div class="field checkbox">
+                    <label><input type="checkbox" id="a-active" checked> Ativo</label>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="availability-cancel">Cancelar</button>
+                    <button type="submit" class="btn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de agendamento -->
+    <div class="modal-overlay hidden" id="booking-modal">
+        <div class="modal">
+            <h2>Novo agendamento</h2>
+            <p id="booking-info"></p>
+            <form id="booking-form">
+                <div class="field">
+                    <label for="b-client-name">Nome do cliente <span class="required">*</span></label>
+                    <input type="text" id="b-client-name">
+                </div>
+                <div class="field">
+                    <label for="b-client-email">E-mail do cliente</label>
+                    <input type="email" id="b-client-email">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="booking-cancel">Cancelar</button>
+                    <button type="submit" class="btn">Agendar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/agendamentos.js"></script>
+</body>
+</html>

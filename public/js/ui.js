@@ -50,3 +50,29 @@ const UI = {
         });
     },
 };
+
+// Helpers de DOM reutilizados.
+function textCell(text) {
+    const td = document.createElement('td');
+    td.textContent = text;
+    return td;
+}
+
+function actionButton(label, variant, onClick) {
+    const button = document.createElement('button');
+    button.className = `btn ${variant} btn-sm`;
+    button.textContent = label;
+    button.addEventListener('click', onClick);
+    return button;
+}
+
+// Seções colapsáveis: clicar no cabeçalho expande/colapsa o corpo.
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.collapsible-header').forEach((header) => {
+        header.addEventListener('click', (event) => {
+            // Ignora cliques em botões dentro do cabeçalho (ex: "Adicionar").
+            if (event.target.closest('button')) return;
+            header.closest('.collapsible').classList.toggle('collapsed');
+        });
+    });
+});

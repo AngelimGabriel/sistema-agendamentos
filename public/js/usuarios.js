@@ -159,20 +159,6 @@ async function removeUser(user) {
 }
 
 // helpers de DOM
-function textCell(text) {
-    const td = document.createElement('td');
-    td.textContent = text;
-    return td;
-}
-
-function actionButton(label, variant, onClick) {
-    const button = document.createElement('button');
-    button.className = `btn ${variant} btn-sm`;
-    button.textContent = label;
-    button.addEventListener('click', onClick);
-    return button;
-}
-
 function setVisible(id, visible) {
     document.getElementById(id).classList.toggle('hidden', !visible);
 }
