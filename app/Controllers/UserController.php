@@ -69,9 +69,9 @@ class UserController
             Response::error($error, 400);
         }
 
-        // Só o admin altera o tipo de usuário (role). Atendente mantém o próprio (evita auto-promoção a admin).
+        // Ninguém altera o próprio tipo de usuário. Só o admin altera, e apenas o de outro usuário.
         $role = $user['role'];
-        if (Auth::isAdmin()) {
+        if (Auth::isAdmin() && Auth::id() !== $id) {
             if (!$this->isValidRole($data['role'] ?? '')) {
                 Response::error('Tipo de usuário inválido.', 400);
             }

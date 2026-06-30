@@ -60,13 +60,14 @@ seguem implementadas exatamente como descrito.
 requisito funcional RQF1.3: "editar os mesmos campos da inserção, exceto email e senha". Na tela de edição,
 esses dois campos não são editáveis por nenhum tipo de usuário.
 
-## Atendente não altera o próprio tipo de usuário
+## Ninguém altera o próprio tipo de usuário
 
-O case (requisito funcional RQF1.3) permite editar os mesmos campos da inserção, o que inclui o Tipo de Usuário.
-Mas o case não trata o caso de um atendente editar o próprio Tipo de Usuário — o que permitiria auto-promoção a
-admin e quebraria todo o controle de permissões. Apoiado na OBSERVAÇÃO do case ("é provável que você se depare
-com algum requisito não especificado... sinta-se à vontade para definir a melhor solução"), bloqueei esse caso:
-só o admin altera o tipo de usuário (role); o atendente, ao editar a si mesmo, altera apenas o nome.
+O case (requisito funcional RQF1.3) permite editar os mesmos campos da inserção, o que inclui o Tipo de Usuário,
+mas não trata o caso de um usuário alterar o próprio tipo. Permitir isso traria dois problemas: um atendente
+poderia se auto-promover a admin (furo de segurança) e um admin poderia se auto-rebaixar e perder o próprio
+acesso. Apoiado na OBSERVAÇÃO do case ("é provável que você se depare com algum requisito não especificado...
+sinta-se à vontade para definir a melhor solução"), defini a regra: ninguém altera o próprio tipo de usuário.
+Só o admin altera o tipo, e apenas o de outro usuário; ao editar a si mesmo, o tipo é mantido.
 
 ## Garante ao menos um administrador
 
