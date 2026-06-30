@@ -24,7 +24,7 @@ A aplicação fica disponível em **http://localhost:8000**.
 
 O banco já sobe com usuários para teste:
 
-| Perfil    | E-mail              | Senha          |
+| Tipo      | E-mail              | Senha          |
 | --------- | ------------------- | -------------- |
 | Admin     | `admin@admin.com`   | `admin123`     |
 | Atendente | `ana@empresa.com`   | `atendente123` |

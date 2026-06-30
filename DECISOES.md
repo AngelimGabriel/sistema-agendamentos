@@ -27,7 +27,7 @@ usuário e detalhe técnico apenas no log do servidor (requisito não funcional 
 
 ## Autenticação por sessão
 
-O case não descreve uma tela de login, mas as permissões por perfil (requisito funcional RQF1) e os status
+O case não descreve uma tela de login, mas as permissões por tipo de usuário (requisito funcional RQF1) e os status
 401/403 (requisitos não funcional RQNF2) a exigem. Implementei login com sessão do PHP e senha em hash bcrypt.
 
 ## Duração do agendamento: slots de 1 hora
@@ -58,18 +58,20 @@ seguem implementadas exatamente como descrito.
 ## Edição não altera email nem senha
 
 requisito funcional RQF1.3: "editar os mesmos campos da inserção, exceto email e senha". Na tela de edição,
-esses dois campos não são editáveis por nenhum perfil.
+esses dois campos não são editáveis por nenhum tipo de usuário.
 
-## Atendente não altera o próprio perfil
+## Atendente não altera o próprio tipo de usuário
 
 O case (requisito funcional RQF1.3) permite editar os mesmos campos da inserção, o que inclui o Tipo de Usuário.
-Mas deixar o atendente editar o próprio `role` permitiria auto-promoção a admin (falha de segurança). Por isso,
-só o admin altera o perfil de um usuário; o atendente, ao editar a si mesmo, mantém o `role` atual.
+Mas o case não trata o caso de um atendente editar o próprio Tipo de Usuário — o que permitiria auto-promoção a
+admin e quebraria todo o controle de permissões. Apoiado na OBSERVAÇÃO do case ("é provável que você se depare
+com algum requisito não especificado... sinta-se à vontade para definir a melhor solução"), bloqueei esse caso:
+só o admin altera o tipo de usuário (role); o atendente, ao editar a si mesmo, altera apenas o nome.
 
 ## Garante ao menos um administrador
 
-O case (requisito funcional RQF1.1) exige que ao menos um usuário tenha perfil admin. O sistema impede excluir
-ou rebaixar o último administrador ativo (responde 400), para a base nunca ficar sem nenhum admin.
+O case (requisito funcional RQF1.1) exige que ao menos um usuário seja administrador. O sistema impede excluir
+ou rebaixar um administrador quando ele é o único ativo (responde 400), para a base nunca ficar sem administrador.
 
 ## Login com mensagem genérica
 
