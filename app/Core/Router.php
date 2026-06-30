@@ -16,6 +16,16 @@ class Router
         $this->routes[] = ['method' => 'POST', 'path' => $path, 'handler' => $handler];
     }
 
+    public function put(string $path, callable|array $handler): void
+    {
+        $this->routes[] = ['method' => 'PUT', 'path' => $path, 'handler' => $handler];
+    }
+
+    public function delete(string $path, callable|array $handler): void
+    {
+        $this->routes[] = ['method' => 'DELETE', 'path' => $path, 'handler' => $handler];
+    }
+
     // Encontra a rota que casa com o método + caminho e a executa. Se nenhuma casar, responde 404.
     public function dispatch(string $method, string $uri): void
     {
