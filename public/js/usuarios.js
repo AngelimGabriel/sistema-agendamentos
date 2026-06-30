@@ -55,8 +55,8 @@ function renderUsers(users) {
         if (currentUser.role === 'admin' || currentUser.id === user.id) {
             actions.appendChild(actionButton('Editar', 'btn-secondary', () => openEditForm(user)));
         }
-        // Excluir: apenas admin (case RQF1.1).
-        if (currentUser.role === 'admin') {
+        // Excluir: apenas admin, e nunca o próprio usuário (reuisito funcional RQF1.1: "excluir outros usuários").
+        if (currentUser.role === 'admin' && currentUser.id !== user.id) {
             actions.appendChild(actionButton('Excluir', 'btn-danger', () => removeUser(user)));
         }
 

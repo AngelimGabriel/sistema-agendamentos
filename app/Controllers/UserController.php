@@ -88,6 +88,11 @@ class UserController
         Auth::requireAdmin();
         $id = (int) $id;
 
+        // O admin exclui apenas OUTROS usuários, nunca a si mesmo (case RQF1.1: "excluir outros usuários").
+        if (Auth::id() === $id) {
+            Response::error('Você não pode excluir o próprio usuário.', 400);
+        }
+
         $user = User::find($id);
         if ($user === null) {
             Response::error('Usuário não encontrado.', 404);
