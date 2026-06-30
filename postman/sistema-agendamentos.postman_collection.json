@@ -168,7 +168,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"user_id\": 2,\n  \"day_of_week\": 5,\n  \"start_time\": \"09:00\",\n  \"end_time\": \"12:00\",\n  \"active\": true\n}"
+              "raw": "{\n  \"user_id\": 2,\n  \"days\": [1, 3, 5],\n  \"start_time\": \"09:00\",\n  \"end_time\": \"12:00\",\n  \"active\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/availability",
