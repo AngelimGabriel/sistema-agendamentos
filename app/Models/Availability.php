@@ -46,6 +46,27 @@ class Availability
         return $stmt->fetch() ?: null;
     }
 
+    // Verifica se já existe janela do mesmo atendente, no mesmo dia, que se sobreponha ao intervalo.
+    // Dois intervalos se sobrepõem quando: existente.inicio < novo.fim E existente.fim > novo.inicio.
+    // ignoreId pula a própria janela (útil na edição).
+    public static function overlaps(int $userId, int $dayOfWeek, string $startTime, string $endTime, ?int $ignoreId = null): bool
+    {
+        $sql = 'SELECT 1 FROM availability
+                WHERE user_id = :uid AND day_of_week = :dow AND deleted_at IS NULL
+                  AND start_time < :end AND end_time > :start';
+        $params = [':uid' => $userId, ':dow' => $dayOfWeek, ':start' => $startTime, ':end' => $endTime];
+
+        if ($ignoreId !== null) {
+            $sql .= ' AND id <> :id';
+            $params[':id'] = $ignoreId;
+        }
+
+        $stmt = Database::connection()->prepare($sql);
+        $stmt->execute($params);
+
+        return (bool) $stmt->fetch();
+    }
+
     public static function create(array $data): int
     {
         $sql = 'INSERT INTO availability (user_id, day_of_week, start_time, end_time, active)

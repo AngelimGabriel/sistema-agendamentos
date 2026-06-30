@@ -78,11 +78,6 @@ class UserController
             $role = $data['role'];
         }
 
-        // Impede deixar o sistema sem nenhum administrador (case exige ao menos um).
-        if ($user['role'] === 'admin' && $role !== 'admin' && User::adminCount() <= 1) {
-            Response::error('O sistema deve ter ao menos um administrador.', 400);
-        }
-
         User::update($id, ['name' => trim($data['name']), 'role' => $role]);
         Response::json(User::find($id));
     }

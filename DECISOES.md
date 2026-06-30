@@ -48,6 +48,13 @@ Não guardo "horários livres". Guardo apenas os agendamentos (ocupados) na tabe
 - O cálculo fica no **backend** (regra de negocio do backend); a API entrega a grade pronta para o front.
 - Atende ao requisito funcional RQF2.3, horários ocupados não são oferecidos como opção válida.
 
+## Disponibilidades não se sobrepõem
+
+O case permite várias janelas por dia, mas não trata janelas sobrepostas ou duplicadas (ex: Segunda 08–12
+cadastrada duas vezes, ou 08–12 junto de 09–12), que gerariam horários redundantes. Apoiado na OBSERVAÇÃO do
+case, bloqueio a criação/edição de janela que se sobreponha a outra do mesmo atendente no mesmo dia (responde 400).
+Janelas encostadas (ex: 09–12 e 12–18) são permitidas, pois não se sobrepõem.
+
 ## Campo Nome obrigatório
 
 No case (requisito funcional RQF1.2), Nome não tem asterisco, pelo requisito não funcional RQNF4, apenas os campos com asterisco são
@@ -71,8 +78,10 @@ Só o admin altera o tipo, e apenas o de outro usuário; ao editar a si mesmo, o
 
 ## Garante ao menos um administrador
 
-O case (requisito funcional RQF1.1) exige que ao menos um usuário seja administrador. O sistema impede excluir
-ou rebaixar um administrador quando ele é o único ativo (responde 400), para a base nunca ficar sem administrador.
+O case (requisito funcional RQF1.1) exige que ao menos um usuário seja administrador. Duas regras garantem isso:
+ninguém altera o próprio tipo de usuário (então o último admin não consegue se rebaixar) e a exclusão do último
+administrador ativo é bloqueada (responde 400). Como rebaixar outro admin só é possível havendo ao menos dois,
+a base nunca fica sem administrador.
 
 ## Login com mensagem genérica
 

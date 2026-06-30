@@ -31,6 +31,10 @@ class AvailabilityController
             Response::error($error, 400);
         }
 
+        if (Availability::overlaps((int) $data['user_id'], (int) $data['day_of_week'], $data['start_time'], $data['end_time'])) {
+            Response::error('Já existe uma disponibilidade que se sobrepõe a esse horário neste dia.', 400);
+        }
+
         $id = Availability::create([
             'user_id'     => (int) $data['user_id'],
             'day_of_week' => (int) $data['day_of_week'],
@@ -47,13 +51,18 @@ class AvailabilityController
         Auth::requireAdmin();
         $id = (int) $id;
 
-        if (Availability::find($id) === null) {
+        $existing = Availability::find($id);
+        if ($existing === null) {
             Response::error('Disponibilidade não encontrada.', 404);
         }
 
         $data = Request::body();
         if (($error = $this->validateWindow($data)) !== null) {
             Response::error($error, 400);
+        }
+
+        if (Availability::overlaps((int) $existing['user_id'], (int) $data['day_of_week'], $data['start_time'], $data['end_time'], $id)) {
+            Response::error('Já existe uma disponibilidade que se sobrepõe a esse horário neste dia.', 400);
         }
 
         Availability::update($id, [
