@@ -1,3 +1,6 @@
+# Na raiz (/), serve o index.html (login) em vez do index.php (API).
+DirectoryIndex index.html index.php
+
 RewriteEngine On
 
 # Se a URL aponta para um arquivo ou pasta que existe de verdade, serve direto
