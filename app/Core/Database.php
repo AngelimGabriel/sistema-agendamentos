@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use PDO;
+use RuntimeException;
 
 class Database
 {
@@ -12,16 +13,17 @@ class Database
     public static function connection(): PDO
     {
         if (self::$connection === null) {
-            $host = getenv('DB_HOST') ?: 'db';
-            $port = getenv('DB_PORT') ?: '5432';
-            $name = getenv('DB_NAME') ?: 'agendamentos';
-            $user = getenv('DB_USER') ?: 'app';
-            $pass = getenv('DB_PASSWORD') ?: 'app';
+            $dsn = sprintf(
+                'pgsql:host=%s;port=%s;dbname=%s',
+                self::env('DB_HOST'),
+                self::env('DB_PORT'),
+                self::env('DB_NAME')
+            );
 
             self::$connection = new PDO(
-                "pgsql:host=$host;port=$port;dbname=$name",
-                $user,
-                $pass,
+                $dsn,
+                self::env('DB_USER'),
+                self::env('DB_PASSWORD'),
                 [
                     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -30,5 +32,18 @@ class Database
         }
 
         return self::$connection;
+    }
+
+    // Lê uma variável de ambiente obrigatória. Falha explicitamente se não existir, em vez de
+    // cair em um valor padrão as credenciais vivem só no ambiente (compose/.env), nunca no código.
+    private static function env(string $key): string
+    {
+        $value = getenv($key);
+
+        if ($value === false) {
+            throw new RuntimeException("Variável de ambiente obrigatória não definida: {$key}");
+        }
+
+        return $value;
     }
 }

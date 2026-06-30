@@ -41,6 +41,16 @@ antes de subir — sem alterar nenhum arquivo:
 APP_PORT=8080 DB_HOST_PORT=5433 docker compose up --build -d
 ```
 
+### Configuração (opcional)
+
+As credenciais do banco e as portas têm valores padrão, então o projeto sobe sem nenhuma
+configuração. Para customizar, copie o `.env.example` para `.env` e ajuste os valores — o
+`docker compose` usa esse arquivo automaticamente:
+
+```bash
+cp .env.example .env
+```
+
 ## Usuários de exemplo
 
 O banco já sobe com usuários para teste:
