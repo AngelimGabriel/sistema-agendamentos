@@ -1,6 +1,7 @@
 let currentUser = null;
 let editingAvailabilityId = null;
 let bookingSlot = null;
+let appointments = [];
 
 const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -13,6 +14,7 @@ async function init() {
     document.getElementById('logout-btn').addEventListener('click', () => Auth.logout());
 
     populateWeekdaySelect();
+    populateDaysCheckboxes();
     populateHourSelect(document.getElementById('a-start'));
     populateHourSelect(document.getElementById('a-end'));
 
@@ -30,6 +32,7 @@ async function init() {
     document.getElementById('slot-date').addEventListener('change', loadSlots);
     document.getElementById('booking-cancel').addEventListener('click', closeBookingForm);
     document.getElementById('booking-form').addEventListener('submit', onBookingSubmit);
+    document.getElementById('status-filter').addEventListener('change', renderAppointments);
 
     await loadAttendants();
 }
@@ -120,13 +123,24 @@ function renderAvailability(items) {
 
 function openAvailabilityForm(item = null) {
     editingAvailabilityId = item ? item.id : null;
-    document.getElementById('availability-title').textContent =
-        item ? 'Editar disponibilidade' : 'Adicionar disponibilidade';
+    const editing = item !== null;
 
-    document.getElementById('a-day').value = item ? item.day_of_week : 1;
-    document.getElementById('a-start').value = item ? item.start_time.slice(0, 5) : '08:00';
-    document.getElementById('a-end').value = item ? item.end_time.slice(0, 5) : '12:00';
-    document.getElementById('a-active').checked = item ? item.active : true;
+    document.getElementById('availability-title').textContent =
+        editing ? 'Editar disponibilidade' : 'Adicionar disponibilidade';
+
+    // Criar: vários dias (checkboxes). Editar: um dia (select).
+    document.getElementById('field-days').classList.toggle('hidden', editing);
+    document.getElementById('field-day').classList.toggle('hidden', !editing);
+
+    if (editing) {
+        document.getElementById('a-day').value = item.day_of_week;
+    } else {
+        document.querySelectorAll('.day-checkbox').forEach((cb) => { cb.checked = false; });
+    }
+
+    document.getElementById('a-start').value = editing ? item.start_time.slice(0, 5) : '08:00';
+    document.getElementById('a-end').value = editing ? item.end_time.slice(0, 5) : '12:00';
+    document.getElementById('a-active').checked = editing ? item.active : true;
 
     document.getElementById('availability-modal').classList.remove('hidden');
 }
@@ -138,29 +152,44 @@ function closeAvailabilityForm() {
 async function onAvailabilitySubmit(event) {
     event.preventDefault();
 
-    const payload = {
-        user_id: Number(selectedAttendantId()),
-        day_of_week: Number(document.getElementById('a-day').value),
-        start_time: document.getElementById('a-start').value,
-        end_time: document.getElementById('a-end').value,
-        active: document.getElementById('a-active').checked,
-    };
+    const start = document.getElementById('a-start').value;
+    const end = document.getElementById('a-end').value;
+    const active = document.getElementById('a-active').checked;
 
-    if (payload.end_time <= payload.start_time) {
+    if (end <= start) {
         UI.toast('A hora final deve ser maior que a hora inicial.');
         return;
     }
 
     try {
         if (editingAvailabilityId === null) {
-            await API.post('/availability', payload);
+            // Criação: um ou mais dias selecionados nos checkboxes.
+            const days = [...document.querySelectorAll('.day-checkbox:checked')].map((cb) => Number(cb.value));
+            if (days.length === 0) {
+                UI.toast('Selecione ao menos um dia da semana.');
+                return;
+            }
+            await API.post('/availability', {
+                user_id: Number(selectedAttendantId()),
+                days,
+                start_time: start,
+                end_time: end,
+                active,
+            });
             UI.toast('Disponibilidade adicionada.', 'success');
         } else {
-            await API.put(`/availability/${editingAvailabilityId}`, payload);
+            // Edição: uma janela, um dia.
+            await API.put(`/availability/${editingAvailabilityId}`, {
+                day_of_week: Number(document.getElementById('a-day').value),
+                start_time: start,
+                end_time: end,
+                active,
+            });
             UI.toast('Disponibilidade atualizada.', 'success');
         }
         closeAvailabilityForm();
         await loadAvailability();
+        await loadSlots(); // a grade de horários depende da disponibilidade
     } catch (error) {
         UI.toast(error.message);
     }
@@ -175,6 +204,7 @@ async function removeAvailability(item) {
         await API.delete(`/availability/${item.id}`);
         UI.toast('Disponibilidade removida.', 'success');
         await loadAvailability();
+        await loadSlots(); // a grade de horários depende da disponibilidade
     } catch (error) {
         UI.toast(error.message);
     }
@@ -282,22 +312,26 @@ async function loadAppointments() {
     if (!id) return;
 
     try {
-        const items = await API.get(`/users/${id}/appointments`);
-        renderAppointments(items);
+        appointments = await API.get(`/users/${id}/appointments`);
+        renderAppointments();
     } catch (error) {
         UI.toast(error.message);
     }
 }
 
-function renderAppointments(items) {
+function renderAppointments() {
+    // Filtro de status (padrão: apenas agendados).
+    const filter = document.getElementById('status-filter').value;
+    const items = filter === 'all' ? appointments : appointments.filter((a) => a.status === filter);
+
     const tbody = document.getElementById('appointments-tbody');
     tbody.innerHTML = '';
 
     if (items.length === 0) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 5;
-        td.textContent = 'Nenhum agendamento.';
+        td.colSpan = 6;
+        td.textContent = 'Nenhum agendamento para o filtro selecionado.';
         tr.appendChild(td);
         tbody.appendChild(tr);
         return;
@@ -308,6 +342,7 @@ function renderAppointments(items) {
         tr.appendChild(textCell(formatDate(item.date)));
         tr.appendChild(textCell(`${item.start_time.slice(0, 5)}–${item.end_time.slice(0, 5)}`));
         tr.appendChild(textCell(item.client_name));
+        tr.appendChild(textCell(item.client_email || '—'));
 
         const statusCell = document.createElement('td');
         const tag = document.createElement('span');
@@ -351,6 +386,20 @@ function populateWeekdaySelect() {
         option.value = value;
         option.textContent = label;
         select.appendChild(option);
+    });
+}
+
+function populateDaysCheckboxes() {
+    const container = document.getElementById('days-checkboxes');
+    WEEKDAYS.forEach((label, value) => {
+        const wrapper = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = value;
+        checkbox.className = 'day-checkbox';
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(document.createTextNode(` ${label}`));
+        container.appendChild(wrapper);
     });
 }
 

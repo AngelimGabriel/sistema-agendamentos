@@ -70,8 +70,8 @@ function actionButton(label, variant, onClick) {
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.collapsible-header').forEach((header) => {
         header.addEventListener('click', (event) => {
-            // Ignora cliques em botões dentro do cabeçalho (ex: "Adicionar").
-            if (event.target.closest('button')) return;
+            // Ignora cliques em controles dentro do cabeçalho (ex: botão "Adicionar", filtro de status).
+            if (event.target.closest('button, select, input, label')) return;
             header.closest('.collapsible').classList.toggle('collapsed');
         });
     });

@@ -71,6 +71,13 @@
             <div class="collapsible-header">
                 <span class="chevron">▾</span>
                 <h2>Agenda do atendente</h2>
+                <div class="spacer"></div>
+                <label for="status-filter" class="filter-label">Status:</label>
+                <select id="status-filter">
+                    <option value="scheduled">Agendado</option>
+                    <option value="cancelled">Cancelado</option>
+                    <option value="all">Todos</option>
+                </select>
             </div>
             <div class="collapsible-body">
                 <table>
@@ -79,6 +86,7 @@
                             <th>Data</th>
                             <th>Horário</th>
                             <th>Cliente</th>
+                            <th>E-mail</th>
                             <th>Status</th>
                             <th></th>
                         </tr>
@@ -94,7 +102,11 @@
         <div class="modal">
             <h2 id="availability-title">Adicionar disponibilidade</h2>
             <form id="availability-form">
-                <div class="field">
+                <div class="field" id="field-days">
+                    <label>Dias da Semana <span class="required">*</span></label>
+                    <div id="days-checkboxes" class="checkbox-group"></div>
+                </div>
+                <div class="field hidden" id="field-day">
                     <label for="a-day">Dia da Semana <span class="required">*</span></label>
                     <select id="a-day"></select>
                 </div>

@@ -129,6 +129,22 @@ body {
     cursor: pointer;
 }
 
+/* Grupo de checkboxes (ex: dias da semana) */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 400;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
 .field input:focus,
 .field select:focus {
     outline: none;
@@ -331,6 +347,19 @@ th {
 
 .collapsible.collapsed .collapsible-body {
     display: none;
+}
+
+.collapsible-header select {
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.collapsible-header .filter-label {
+    font-weight: 400;
+    color: var(--gray);
+    font-size: 0.9rem;
 }
 
 .slot-grid {
