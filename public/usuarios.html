@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuários — Sistema de Agendamentos</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/usuarios.html" class="active">Usuários</a>
+        <a href="/agendamentos.html">Agendamentos</a>
+        <div class="spacer"></div>
+        <span class="user-info" id="user-info"></span>
+        <button class="btn btn-secondary btn-sm" id="logout-btn">Sair</button>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Usuários</h1>
+            <button class="btn hidden" id="new-user-btn">Novo usuário</button>
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Tipo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de formulário, reutilizado para criar e editar -->
+    <div class="modal-overlay hidden" id="form-modal">
+        <div class="modal">
+            <h2 id="form-title">Novo usuário</h2>
+            <form id="user-form">
+                <div class="field">
+                    <label for="f-name">Nome <span class="required">*</span></label>
+                    <input type="text" id="f-name">
+                </div>
+                <div class="field" id="field-role">
+                    <label for="f-role">Tipo de Usuário <span class="required">*</span></label>
+                    <select id="f-role">
+                        <option value="attendant">Atendente</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <div class="field" id="field-email">
+                    <label for="f-email">E-mail <span class="required">*</span></label>
+                    <input type="email" id="f-email">
+                </div>
+                <div class="field" id="field-password">
+                    <label for="f-password">Senha <span class="required">*</span></label>
+                    <input type="password" id="f-password">
+                </div>
+                <div class="field" id="field-password-confirmation">
+                    <label for="f-password-confirmation">Confirme a Senha <span class="required">*</span></label>
+                    <input type="password" id="f-password-confirmation">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="form-cancel">Cancelar</button>
+                    <button type="submit" class="btn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/usuarios.js"></script>
+</body>
+</html>
